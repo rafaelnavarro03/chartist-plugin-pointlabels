@@ -69,15 +69,45 @@
 
       function addLabel(position, data) {
         // if x and y exist concat them otherwise output only the existing value
-        var value = data.value.x !== undefined && data.value.y ?
-          (data.value.x + ', ' + data.value.y) :
-          data.value.y || data.value.x;
+        var value;
+        if (data.series.name !== "terrain" && data.series.name !== "terrainMarks"  && data.series.name !== "catalogGuitarLabels"){
+          value = data.value.x !== undefined && data.value.y ?
+            (data.value.x + ', ' + data.value.y) :
+            data.value.y || data.value.x;
 
-        data.group.elem('text', {
-          x: position.x + options.labelOffset.x,
-          y: position.y + options.labelOffset.y,
-          style: 'text-anchor: ' + options.textAnchor
-        }, options.labelClass).text(options.labelInterpolationFnc(value));
+          data.group.elem('text', {
+            x: position.x + options.labelOffset.x,
+            y: position.y + options.labelOffset.y,
+            transform: "rotate(-90, " + position.x + ", " + (position.y + options.labelOffset.y) + ")",
+            style: 'text-anchor: ' + options.textAnchor + ';dominant-baseline: central;fill: rgba(0, 0, 0, 1)'
+          }, options.labelClass).text(options.labelInterpolationFnc(
+              value, data.series
+            ));
+        } else if (data.series.name === "catalogGuitarLabels" ){
+          value = data.value.x !== undefined && data.value.y ?
+            (data.value.x + ', ' + data.value.y) :
+            data.value.y || data.value.x;
+
+          data.group.elem('text', {
+            x: position.x + options.labelOffset.x,
+            y: position.y + options.labelOffset.y,
+            style: 'text-anchor: ' + options.textAnchor + ';fill: rgba(0, 0, 0, 1)'
+          }, options.labelClass).text(options.labelInterpolationFnc(
+              value, data.series
+            ));
+        }else {
+          value = data.value.x !== undefined && data.value.y ?
+            (data.value.x + ', ' + data.value.y) :
+            data.value.y || data.value.x;
+
+          data.group.elem('text', {
+            x: position.x + options.labelOffset.x,
+            y: position.y + options.labelOffset.y,
+            style: 'text-anchor: ' + options.textAnchor
+          }, options.labelClass).text(options.labelInterpolationFnc(
+              value, data.series
+            ));
+        }
       }
 
       return function ctPointLabels(chart) {
